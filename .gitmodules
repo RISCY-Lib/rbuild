@@ -1,0 +1,3 @@
+[submodule "py_pretty_logger"]
+	path = py_pretty_logger
+	url = https://github.com/RISCY-Lib/py_pretty_logger
