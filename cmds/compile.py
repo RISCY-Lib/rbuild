@@ -28,6 +28,8 @@ from cmds._common import run_cmd
 
 import os
 
+from pathlib import Path
+
 
 #####################################################################################
 # Sub-Command Class
@@ -80,22 +82,41 @@ class Compile(BaseCmd):
         self.parse()
         self.elaborate()
 
+        logging.success_banner("Test-bench Compiled Successfully!")
+
     def parse(self) -> None:
         """Parse all of the files in the build tree
         """
         include_dirs = self.include_dirs()
 
+        success = True
+
         for node in self.btree.traverse():
             for src in node.src:
                 if src.suffix in [".sv", ".v"]:
-                    run_cmd(f"xvlog -sv {include_dirs} {src}")
+                    cmd = "xvlog -sv"
+                else:
+                    cmd = "xvhdl"
+
+                if Path(os.environ['RISCY_DIR']) in src.parents:
+                    cmd += " -L uvm"
+
+                ret_val = run_cmd(f"{cmd} {include_dirs} {src}")
+
+                if ret_val != 0:
+                    logging.error(f"Error parsing: {src}")
+                    success = False
+
+        if not success:
+            logging.critical(f"Stopping due to parsing errors.")
+            exit(1)
 
     def elaborate(self) -> None:
         """Elaborate the design for simulation
         """
         include_dirs = self.include_dirs()
 
-        cmd = f"xelab tb_top {include_dirs}"
+        cmd = f"xelab tb_top {include_dirs} -L uvm"
 
         for define in self.defines:
             cmd += f" -d {define}"
@@ -114,7 +135,7 @@ class Compile(BaseCmd):
             for inc in node.includes:
                 dirs.add(str(inc))
 
-        icmd = "-i ".join(dirs)
+        icmd = " -i ".join(dirs)
 
         if icmd != "":
             icmd = "-i " + icmd

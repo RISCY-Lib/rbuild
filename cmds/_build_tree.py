@@ -129,6 +129,11 @@ class _TreeBuilder:
         with open(bnode.path, "r") as bnode_yaml:
             bnode_dict = yaml.safe_load(bnode_yaml)
 
+        if bnode_dict is None:
+            logging.warning(f"Build node is empty")
+            self.nodes[node_path] = bnode
+            return bnode
+
         if 'src' in bnode_dict:
             for src in bnode_dict['src']:
                 bnode.src.append(self.resolve_path(src, bnode_dir))
