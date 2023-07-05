@@ -1,2 +1,3 @@
 # Python Ignores
 __pycache__/
+.mypy_cache/

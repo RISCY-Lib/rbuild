@@ -27,6 +27,7 @@ from datetime import datetime
 from pathlib import Path
 
 import argparse
+from cmds.compile import Compile
 
 import os
 
@@ -118,6 +119,7 @@ def handle_command_line() -> argparse.Namespace:
         help="Sub-Command Help",
         dest="subcommand_name"
     )
+    Compile.add_subcmd(sub_parsers)
 
     return parser.parse_args()
 
