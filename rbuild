@@ -109,7 +109,7 @@ def handle_command_line() -> argparse.Namespace:
         help="Prints the current project settings prior to executing any sub-command"
     )
     parser.add_argument(
-        "--logfile", "-a", default="dv_log.log", type=str,
+        "--logfile", "-a", default="rbuild.log", type=str,
         help="Changes the default logfile name"
     )
 

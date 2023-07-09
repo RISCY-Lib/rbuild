@@ -117,11 +117,14 @@ class Compile(BaseCmd):
         include_dirs = self.include_dirs()
 
         cmd = f"xelab tb_top {include_dirs} -L uvm"
+        cmd += " --debug all -O0"
 
         for define in self.defines:
             cmd += f" -d {define}"
 
-        run_cmd(cmd)
+        if run_cmd(cmd) != 0:
+            logging.critical(f"Error performing elaboration.")
+            exit(1)
 
     def include_dirs(self) -> str:
         """Get a list of all the include dirs from the build tree
